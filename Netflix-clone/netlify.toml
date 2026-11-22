@@ -1,0 +1,11 @@
+# Netlify Configuration for Netflix-clone directory
+
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+# Single Page Application (SPA) rewrite rule
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

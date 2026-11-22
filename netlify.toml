@@ -1,0 +1,19 @@
+# Root Netlify Configuration
+# Automatically tells Netlify where the Vite app is located and how to build & deploy it
+
+[build]
+  base = "Netflix-clone"
+  publish = "dist"
+  command = "npm run build"
+
+# React Router SPA redirect rule: reroutes all routes to /index.html with status 200
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
