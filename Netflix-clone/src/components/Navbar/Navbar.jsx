@@ -9,7 +9,7 @@ import { auth, logout } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import useMovieSearch from "../../hooks/useMovieSearch";
-import { FaSearch, FaTimes, FaPlay, FaUser, FaBookmark, FaSignOutAlt } from "react-icons/fa";
+import { FaSearch, FaTimes, FaPlay, FaUser, FaBookmark, FaSignOutAlt, FaArrowLeft } from "react-icons/fa";
 
 const Navbar = () => {
   const navRef = useRef();
@@ -122,9 +122,16 @@ const Navbar = () => {
                 setSearchQuery("");
               }
             }}
-            title="Search movies by title"
+            title={isSearchOpen ? "Close search" : "Search movies by title"}
           >
-            {isSearchOpen ? <FaTimes /> : <FaSearch />}
+            {isSearchOpen ? (
+              <>
+                <FaArrowLeft className="search-mobile-back" />
+                <FaTimes className="search-desktop-close" />
+              </>
+            ) : (
+              <FaSearch />
+            )}
           </button>
 
           {isSearchOpen && (
