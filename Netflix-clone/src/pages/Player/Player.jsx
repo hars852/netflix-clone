@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import "./player.css";
+import "./Player.css";
 import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
 import { fetchMovieDetails, fetchMovieStream, fetchEpisodeStream, saveWatchProgress, FALLBACK_MOVIES } from "../../services/api";
 import netflix_spinner from "../../assets/netflix_spinner.gif";

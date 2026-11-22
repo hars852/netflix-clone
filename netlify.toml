@@ -4,12 +4,11 @@
 [build]
   base = "Netflix-clone/"
   command = "npm install && npm run build"
-  publish = "Netflix-clone/dist"
+  publish = "dist"
 
-# Environment variables for build
+# Environment variables for build - Node 20 required for Vite 7 and React Router 7
 [build.environment]
-  NODE_VERSION = "18"
-  NPM_FLAGS = "--legacy-peer-deps"
+  NODE_VERSION = "20"
 
 # React Router SPA: redirect all routes to index.html
 [[redirects]]
