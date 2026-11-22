@@ -257,3 +257,32 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+@media screen and (max-width: 768px) {
+  .series-hero-header {
+    padding: 85px 4% 20px;
+  }
+  .series-hero-header h1 {
+    font-size: 24px;
+  }
+  .series-content-layout {
+    padding: 0 4%;
+  }
+  .series-cards-row {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+}
+
+@media screen and (max-width: 580px) {
+  .series-card-item {
+    flex: 0 0 170px;
+  }
+  .episodes-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .series-card-meta h3 {
+    font-size: 13px;
+  }
+}

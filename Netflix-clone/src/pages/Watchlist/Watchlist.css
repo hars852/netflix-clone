@@ -145,3 +145,33 @@
   color: #a3a3a3;
   font-size: 12px;
 }
+
+@media screen and (max-width: 768px) {
+  .watchlist-header {
+    padding: 85px 4% 20px;
+  }
+  .watchlist-header h1 {
+    font-size: 24px;
+  }
+  .watchlist-grid {
+    padding: 0 4%;
+    gap: 12px;
+  }
+}
+
+@media screen and (max-width: 580px) {
+  .watchlist-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .watchlist-card-meta {
+    padding: 8px 10px;
+  }
+  .watchlist-card-meta h3 {
+    font-size: 12px;
+  }
+  .watchlist-sub-row {
+    font-size: 10px;
+    gap: 6px;
+  }
+}

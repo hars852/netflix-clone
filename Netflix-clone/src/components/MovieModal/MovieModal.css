@@ -290,3 +290,39 @@
     padding: 18px;
   }
 }
+
+@media screen and (max-width: 580px) {
+  .movie-modal-backdrop {
+    padding: 10px;
+  }
+  .movie-modal-content {
+    max-height: 94vh;
+    border-radius: 8px;
+  }
+  .modal-close-btn {
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  .modal-title {
+    font-size: 18px;
+  }
+  .modal-body {
+    padding: 14px;
+    gap: 12px;
+  }
+  .modal-action-buttons {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .modal-btn {
+    padding: 7px 14px;
+    font-size: 13px;
+  }
+  .modal-overview {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}

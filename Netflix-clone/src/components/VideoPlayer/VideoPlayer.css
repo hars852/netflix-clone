@@ -426,3 +426,32 @@
     font-size: 16px;
   }
 }
+
+@media screen and (max-width: 580px) {
+  .player-top-bar {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+  .top-back-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+  }
+  .top-video-title {
+    font-size: 13px;
+  }
+  .player-controls-container {
+    padding: 12px 10px 8px;
+    gap: 8px;
+  }
+  .ctrl-btn {
+    font-size: 15px;
+    padding: 4px;
+  }
+  .time-display {
+    font-size: 10px;
+  }
+  .volume-slider {
+    width: 50px !important;
+  }
+}

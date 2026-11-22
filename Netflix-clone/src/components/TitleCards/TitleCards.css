@@ -182,11 +182,49 @@
   .slider-arrow {
     display: none; /* On touch devices, native swipe is preferred */
   }
+  .card-list {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  }
   .card-list .card,
   .card-skeleton {
     width: 170px;
+    scroll-snap-align: start;
   }
   .title-cards h2 {
     font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .title-cards {
+    margin-top: 24px;
+    margin-bottom: 16px;
+  }
+  .title-cards h2 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  .card-list {
+    gap: 8px;
+    padding: 6px 0 12px;
+  }
+  .card-list .card,
+  .card-skeleton {
+    width: 135px;
+    border-radius: 4px;
+  }
+  .card-list .card .card-title {
+    font-size: 11px;
+    bottom: 5px;
+    left: 6px;
+    right: 6px;
+  }
+}
+
+@media screen and (max-width: 380px) {
+  .card-list .card,
+  .card-skeleton {
+    width: 115px;
   }
 }
