@@ -185,6 +185,48 @@
   opacity: 1;
 }
 
+.search-status-message {
+  padding: 16px 12px;
+  font-size: 13px;
+  color: #a3a3a3;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.search-clear-btn {
+  background: transparent;
+  border: none;
+  color: #8c8c8c;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: color 0.15s ease;
+}
+
+.search-clear-btn:hover {
+  color: #ffffff;
+}
+
+.search-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-top-color: #e50914;
+  border-radius: 50%;
+  animation: searchSpin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes searchSpin {
+  to { transform: rotate(360deg); }
+}
+
 /* Profile section */
 .icons {
   width: 20px;

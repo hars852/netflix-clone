@@ -8,36 +8,44 @@ import caret_icon from "../../assets/caret_icon.svg";
 import { auth, logout } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
-import { searchMovies } from "../../services/api";
+import useMovieSearch from "../../hooks/useMovieSearch";
 import { FaSearch, FaTimes, FaPlay, FaUser, FaBookmark, FaSignOutAlt } from "react-icons/fa";
 
 const Navbar = () => {
   const navRef = useRef();
   const searchInputRef = useRef();
+  const searchWrapperRef = useRef();
   const profileRef = useRef();
   const navigate = useNavigate();
 
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [user, setUser] = useState(auth.currentUser);
+
+  // Perfect debounce search hook with anti-race condition protection & cache
+  const { results: searchResults, loading: isSearching, debouncedQuery } = useMovieSearch(searchQuery, 350);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (curr) => setUser(curr));
     return () => unsub();
   }, []);
 
+  // Handle click outside to close profile dropdown & search bar
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
         setIsProfileOpen(false);
       }
+      if (searchWrapperRef.current && !searchWrapperRef.current.contains(e.target)) {
+        if (!searchQuery.trim()) {
+          setIsSearchOpen(false);
+        }
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [searchQuery]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -52,28 +60,19 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Live search debounced query
-  useEffect(() => {
-    if (!searchQuery.trim()) {
-      setSearchResults([]);
-      return;
-    }
-
-    const timer = setTimeout(async () => {
-      setIsSearching(true);
-      const results = await searchMovies(searchQuery);
-      setSearchResults(results);
-      setIsSearching(false);
-    }, 250);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
   const handleSelectMovie = (movie) => {
     setIsSearchOpen(false);
     setSearchQuery("");
-    setSearchResults([]);
     navigate(`/player/${movie.id}?type=movie`);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    } else if (e.key === "Enter" && searchResults.length > 0) {
+      handleSelectMovie(searchResults[0]);
+    }
   };
 
   return (
@@ -110,17 +109,17 @@ const Navbar = () => {
       </div>
 
       <div className="navbar-right">
-        {/* Interactive Search Bar */}
-        <div className={`nav-search-wrapper ${isSearchOpen ? 'active' : ''}`}>
+        {/* Interactive Search Bar with Optimized Debounce */}
+        <div ref={searchWrapperRef} className={`nav-search-wrapper ${isSearchOpen ? 'active' : ''}`}>
           <button
             className="search-toggle-btn"
             onClick={() => {
-              setIsSearchOpen(!isSearchOpen);
-              if (!isSearchOpen) {
+              const nextState = !isSearchOpen;
+              setIsSearchOpen(nextState);
+              if (nextState) {
                 setTimeout(() => searchInputRef.current?.focus(), 150);
               } else {
                 setSearchQuery("");
-                setSearchResults([]);
               }
             }}
             title="Search movies by title"
@@ -129,38 +128,69 @@ const Navbar = () => {
           </button>
 
           {isSearchOpen && (
-            <input
-              ref={searchInputRef}
-              type="text"
-              placeholder="Titles, people, genres..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="nav-search-input"
-            />
+            <>
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder="Titles, people, genres..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="nav-search-input"
+              />
+              {searchQuery && (
+                <button
+                  className="search-clear-btn"
+                  onClick={() => {
+                    setSearchQuery("");
+                    searchInputRef.current?.focus();
+                  }}
+                  title="Clear search"
+                >
+                  <FaTimes />
+                </button>
+              )}
+            </>
           )}
 
-          {/* Instant Search Dropdown */}
-          {isSearchOpen && searchResults.length > 0 && (
+          {/* Instant Debounced Search Dropdown */}
+          {isSearchOpen && searchQuery.trim() && (
             <div className="search-dropdown-results">
-              <div className="dropdown-header">Verified Full-Length Movies</div>
-              {searchResults.slice(0, 6).map((movie) => (
-                <div
-                  key={movie.id}
-                  className="search-result-item"
-                  onClick={() => handleSelectMovie(movie)}
-                >
-                  <img
-                    src={movie.backdropUrl || movie.posterUrl}
-                    alt={movie.title}
-                    className="result-thumb"
-                  />
-                  <div className="result-info">
-                    <h4>{movie.title}</h4>
-                    <p>{movie.year} • {movie.genres?.[0] || 'Movie'} • ★ {movie.rating || '7.5'}</p>
-                  </div>
-                  <FaPlay className="play-hint-icon" />
+              {isSearching ? (
+                <div className="search-status-message">
+                  <span className="search-spinner" />
+                  Searching titles...
                 </div>
-              ))}
+              ) : searchResults.length > 0 ? (
+                <>
+                  <div className="dropdown-header">Verified Full-Length Movies</div>
+                  {searchResults.slice(0, 6).map((movie) => (
+                    <div
+                      key={movie.id}
+                      className="search-result-item"
+                      onClick={() => handleSelectMovie(movie)}
+                    >
+                      <img
+                        src={movie.backdropUrl || movie.posterUrl || 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=200&auto=format&fit=crop&q=80'}
+                        alt={movie.title}
+                        className="result-thumb"
+                        onError={(e) => {
+                          e.target.src = 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=200&auto=format&fit=crop&q=80';
+                        }}
+                      />
+                      <div className="result-info">
+                        <h4>{movie.title}</h4>
+                        <p>{movie.year || 'Classic'} • {movie.genres?.[0] || 'Movie'} • ★ {movie.rating || '7.5'}</p>
+                      </div>
+                      <FaPlay className="play-hint-icon" />
+                    </div>
+                  ))}
+                </>
+              ) : debouncedQuery.trim() ? (
+                <div className="search-status-message">
+                  No movies found for "{debouncedQuery}"
+                </div>
+              ) : null}
             </div>
           )}
         </div>
