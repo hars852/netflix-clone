@@ -1,0 +1,272 @@
+/* player.css */
+
+.player-page-root {
+  min-height: 100vh;
+  background-color: #141414;
+  color: #ffffff;
+  padding: 20px 4% 60px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.player-view-wrapper {
+  width: 100%;
+  max-width: 1050px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Loading & Error States */
+.player-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  gap: 16px;
+}
+
+.player-spinner {
+  width: 65px;
+}
+
+.loading-text {
+  font-size: 16px;
+  color: #a3a3a3;
+  letter-spacing: 0.5px;
+}
+
+.player-error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  gap: 16px;
+  text-align: center;
+  padding: 40px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.player-error-container.unstreamable-card {
+  max-width: 680px;
+  border: 1px solid rgba(229, 9, 20, 0.3);
+  background: rgba(20, 20, 20, 0.95);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
+.player-error-container h2 {
+  font-size: 26px;
+  color: #e50914;
+  margin: 0;
+}
+
+.player-error-container p {
+  color: #d2d2d2;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.sub-notice {
+  color: #a3a3a3 !important;
+  font-size: 13px !important;
+  margin-top: 8px !important;
+}
+
+/* Suggested full movies list */
+.suggested-full-movies {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+  margin: 16px 0;
+}
+
+.suggested-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.suggested-item:hover {
+  background: rgba(229, 9, 20, 0.2);
+  border-color: #e50914;
+  transform: translateY(-2px);
+}
+
+.suggested-item img {
+  width: 64px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.suggested-meta h4 {
+  font-size: 13px;
+  margin: 0 0 4px 0;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 170px;
+}
+
+.suggested-meta span {
+  font-size: 11px;
+  color: #46d369;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.error-back-btn {
+  background-color: #e50914;
+  color: #ffffff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.error-back-btn:hover {
+  background-color: #f40612;
+}
+
+/* Stream Details Card Below Video */
+.stream-details-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 24px 28px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.details-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.title-source-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.free-stream-tag {
+  color: #46d369;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.stream-movie-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.stream-source-badge {
+  background: rgba(255, 255, 255, 0.08);
+  color: #b3b3b3;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.details-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.meta-pill {
+  font-size: 13px;
+  font-weight: 600;
+  color: #d2d2d2;
+}
+
+.meta-pill.rating {
+  background: rgba(245, 197, 24, 0.15);
+  color: #f5c518;
+  border: 1px solid rgba(245, 197, 24, 0.3);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.meta-pill.quality {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.genres-pill-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.genre-bubble {
+  background: rgba(229, 9, 20, 0.15);
+  color: #ff6b72;
+  border: 1px solid rgba(229, 9, 20, 0.35);
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.stream-movie-overview {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #cccccc;
+  margin: 0;
+}
+
+@media screen and (max-width: 768px) {
+  .player-page-root {
+    padding: 12px 2% 40px;
+  }
+  .stream-movie-title {
+    font-size: 24px;
+  }
+  .stream-details-card {
+    padding: 18px;
+  }
+  .suggested-full-movies {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,192 @@
+.title-cards {
+  margin-top: 40px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.title-cards h2 {
+  margin-bottom: 14px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #e5e5e5;
+  transition: color 0.2s ease;
+}
+
+.title-cards:hover h2 {
+  color: #ffffff;
+}
+
+/* Carousel wrapper for arrows and card list */
+.carousel-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Left & Right Netflix slider arrows */
+.slider-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: calc(100% - 24px);
+  background: rgba(0, 0, 0, 0.72);
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 0.25s ease;
+  border-radius: 4px;
+  opacity: 0;
+  outline: none;
+}
+
+.carousel-container:hover .slider-arrow {
+  opacity: 1;
+}
+
+.slider-arrow:hover {
+  background: rgba(0, 0, 0, 0.92);
+  color: #e50914;
+  transform: translateY(-50%) scale(1.06);
+}
+
+.slider-arrow:active {
+  transform: translateY(-50%) scale(0.96);
+}
+
+.slider-arrow-left {
+  left: 0;
+}
+
+.slider-arrow-right {
+  right: 0;
+}
+
+/* Card list horizontal container */
+.card-list {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 10px 4px 16px;
+  cursor: grab;
+  user-select: none;
+  width: 100%;
+}
+
+.card-list:active {
+  cursor: grabbing;
+}
+
+.card-list::-webkit-scrollbar {
+  display: none;
+}
+
+.card-list {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.card-list .card {
+  position: relative;
+  flex: 0 0 auto;
+  width: 240px;
+  text-decoration: none;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #181818;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.card-list .card:hover {
+  transform: scale(1.06);
+  z-index: 10;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.85);
+}
+
+.card-image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #202020;
+}
+
+.card-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  pointer-events: none;
+}
+
+.card-gradient {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70%;
+  background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.88) 100%);
+  pointer-events: none;
+}
+
+.card-list .card .card-title {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  right: 10px;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+  z-index: 2;
+  transition: color 0.2s ease;
+}
+
+.card-list .card:hover .card-title {
+  color: #e50914;
+}
+
+/* Shimmer card skeletons while API loads */
+.card-skeleton {
+  flex: 0 0 auto;
+  width: 240px;
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #181818 25%, #262626 50%, #181818 75%);
+  background-size: 200% 100%;
+  animation: cardShimmer 1.5s infinite;
+}
+
+@keyframes cardShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .slider-arrow {
+    display: none; /* On touch devices, native swipe is preferred */
+  }
+  .card-list .card,
+  .card-skeleton {
+    width: 170px;
+  }
+  .title-cards h2 {
+    font-size: 18px;
+  }
+}
