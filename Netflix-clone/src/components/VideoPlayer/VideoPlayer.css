@@ -14,12 +14,22 @@
   user-select: none;
 }
 
-.custom-video-player-root.fullscreen {
-  width: 100vw;
-  height: 100vh;
-  border-radius: 0;
-  max-width: none;
-  aspect-ratio: auto;
+.custom-video-player-root.fullscreen,
+:fullscreen .custom-video-player-root,
+:-webkit-full-screen .custom-video-player-root {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  border-radius: 0 !important;
+  max-width: none !important;
+  aspect-ratio: auto !important;
+  z-index: 999999 !important;
+  background-color: #000000 !important;
 }
 
 .custom-video-player-root.hide-cursor {
@@ -184,13 +194,24 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  box-sizing: border-box;
+  overflow: visible;
 }
 
-.controls-left,
+.controls-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .controls-right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .ctrl-btn {
@@ -204,12 +225,27 @@
   justify-content: center;
   padding: 6px;
   border-radius: 4px;
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition: color 0.15s ease, transform 0.15s ease, background-color 0.15s ease;
+  flex-shrink: 0;
 }
 
 .ctrl-btn:hover {
   color: #ffffff;
   transform: scale(1.15);
+}
+
+.ctrl-btn.fullscreen-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: #ffffff;
+}
+
+.ctrl-btn.fullscreen-btn:hover {
+  background: #e50914;
+  border-color: #e50914;
+  color: #ffffff;
 }
 
 /* Volume Slider */
@@ -416,11 +452,17 @@
   .player-controls-container {
     padding: 20px 14px 12px;
   }
+  .controls-left,
+  .controls-right {
+    gap: 10px;
+  }
   .time-display {
     font-size: 11px;
+    margin-left: 2px;
   }
   .ctrl-btn {
     font-size: 16px;
+    padding: 5px;
   }
   .top-video-title {
     font-size: 16px;
@@ -441,17 +483,96 @@
     font-size: 13px;
   }
   .player-controls-container {
-    padding: 12px 10px 8px;
-    gap: 8px;
+    padding: 10px 8px 6px;
+    gap: 6px;
+  }
+  .controls-row {
+    justify-content: space-between;
+    gap: 4px;
+  }
+  .controls-left {
+    gap: 6px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .controls-right {
+    gap: 6px;
+    flex-shrink: 0;
+    margin-left: auto;
   }
   .ctrl-btn {
-    font-size: 15px;
+    font-size: 14px;
     padding: 4px;
+    min-width: 28px;
+    min-height: 28px;
+  }
+  /* Hide volume slider on mobile screens to save space and avoid control clipping */
+  .volume-slider {
+    display: none !important;
+  }
+  .volume-container:hover .volume-slider {
+    display: none !important;
+    width: 0 !important;
   }
   .time-display {
     font-size: 10px;
+    margin-left: 2px;
+    gap: 3px;
+    white-space: nowrap;
   }
-  .volume-slider {
-    width: 50px !important;
+  .speed-btn span {
+    font-size: 11px;
+    padding: 2px 4px;
+  }
+  .ctrl-btn.fullscreen-btn {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 4px 6px;
+    background: rgba(229, 9, 20, 0.9);
+    border-color: #e50914;
+    color: #fff;
+  }
+}
+
+@media screen and (max-width: 380px) {
+  .player-controls-container {
+    padding: 8px 6px 4px;
+    gap: 4px;
+  }
+  .controls-left {
+    gap: 4px;
+  }
+  .controls-right {
+    gap: 4px;
+  }
+  .ctrl-btn {
+    font-size: 13px;
+    padding: 3px;
+    min-width: 26px;
+    min-height: 26px;
+  }
+  .time-display {
+    font-size: 9px;
+    gap: 2px;
+  }
+  .speed-btn span {
+    font-size: 10px;
+    padding: 1px 3px;
+  }
+  .ctrl-btn.fullscreen-btn {
+    min-width: 28px;
+    min-height: 28px;
+    padding: 3px 5px;
+  }
+}
+
+@media screen and (max-width: 340px) {
+  /* On ultra-narrow screens (<= 340px), hide skip buttons to ensure Fullscreen button is never clipped */
+  .skip-btn {
+    display: none !important;
+  }
+  .total-time,
+  .time-divider {
+    display: none !important;
   }
 }

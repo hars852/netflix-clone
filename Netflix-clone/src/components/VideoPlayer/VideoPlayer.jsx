@@ -214,17 +214,112 @@ const VideoPlayer = ({
     }
   };
 
-  // Fullscreen
-  const toggleFullscreen = () => {
+  // Orientation lock helpers
+  const lockLandscape = async () => {
+    if (window.screen?.orientation?.lock) {
+      try {
+        await window.screen.orientation.lock('landscape');
+        return;
+      } catch (err1) {
+        try {
+          await window.screen.orientation.lock('landscape-primary');
+          return;
+        } catch (err2) {
+          console.log('Orientation lock not supported or allowed:', err2.message);
+        }
+      }
+    }
+  };
+
+  const unlockOrientation = () => {
+    if (window.screen?.orientation?.unlock) {
+      try {
+        window.screen.orientation.unlock();
+      } catch (err) {
+        console.log('Orientation unlock note:', err.message);
+      }
+    }
+  };
+
+  // Synchronize fullscreen state with browser events
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isFs = !!(
+        document.fullscreenElement ||
+        document.webkitFullscreenElement ||
+        document.mozFullScreenElement ||
+        document.msFullscreenElement
+      );
+      setIsFullscreen(isFs);
+      if (!isFs) {
+        unlockOrientation();
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+    document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+    document.addEventListener('MSFullscreenChange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('mozfullscreenchange', handleFullscreenChange);
+      document.removeEventListener('MSFullscreenChange', handleFullscreenChange);
+      unlockOrientation();
+    };
+  }, []);
+
+  // Fullscreen toggle with auto-rotate to landscape on mobile
+  const toggleFullscreen = async () => {
     const container = containerRef.current;
+    const video = videoRef.current;
     if (!container) return;
 
-    if (!document.fullscreenElement) {
-      container.requestFullscreen().catch((err) => console.error(err));
-      setIsFullscreen(true);
+    const isCurrentlyFullscreen = !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+
+    if (!isCurrentlyFullscreen) {
+      try {
+        if (container.requestFullscreen) {
+          await container.requestFullscreen();
+        } else if (container.webkitRequestFullscreen) {
+          await container.webkitRequestFullscreen();
+        } else if (container.mozRequestFullScreen) {
+          await container.mozRequestFullScreen();
+        } else if (container.msRequestFullscreen) {
+          await container.msRequestFullscreen();
+        } else if (video && video.webkitEnterFullscreen) {
+          video.webkitEnterFullscreen();
+        }
+        setIsFullscreen(true);
+        await lockLandscape();
+      } catch (err) {
+        console.warn('Fullscreen request failed:', err.message);
+        setIsFullscreen(true);
+        await lockLandscape();
+      }
     } else {
-      document.exitFullscreen().catch((err) => console.error(err));
-      setIsFullscreen(false);
+      try {
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          await document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+          await document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+          await document.msExitFullscreen();
+        }
+      } catch (err) {
+        console.warn('Exit fullscreen failed:', err.message);
+      } finally {
+        setIsFullscreen(false);
+        unlockOrientation();
+      }
     }
   };
 
@@ -419,37 +514,37 @@ const VideoPlayer = ({
         <div className="controls-row">
           <div className="controls-left">
             {/* Play/Pause */}
-            <button className="ctrl-btn" onClick={togglePlay} title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}>
+            <button className="ctrl-btn play-pause-btn" onClick={togglePlay} title={isPlaying ? 'Pause (Space)' : 'Play (Space)'}>
               {isPlaying ? <FaPause /> : <FaPlay />}
             </button>
 
             {/* Skip -10s */}
-            <button className="ctrl-btn" onClick={() => skipTime(-10)} title="Rewind 10s (Left Arrow)">
+            <button className="ctrl-btn skip-btn" onClick={() => skipTime(-10)} title="Rewind 10s (Left Arrow)">
               <FaUndoAlt />
             </button>
 
             {/* Skip +10s */}
-            <button className="ctrl-btn" onClick={() => skipTime(10)} title="Forward 10s (Right Arrow)">
+            <button className="ctrl-btn skip-btn" onClick={() => skipTime(10)} title="Forward 10s (Right Arrow)">
               <FaRedoAlt />
             </button>
 
             {/* Previous Episode button (Series mode) */}
             {hasPrevEpisode && (
-              <button className="ctrl-btn" onClick={onPrevEpisode} title="Previous Episode">
+              <button className="ctrl-btn episode-btn" onClick={onPrevEpisode} title="Previous Episode">
                 <FaStepBackward />
               </button>
             )}
 
             {/* Next Episode button (Series mode) */}
             {hasNextEpisode && (
-              <button className="ctrl-btn" onClick={onNextEpisode} title="Next Episode">
+              <button className="ctrl-btn episode-btn" onClick={onNextEpisode} title="Next Episode">
                 <FaStepForward />
               </button>
             )}
 
             {/* Volume Control */}
             <div className="volume-container">
-              <button className="ctrl-btn" onClick={toggleMute} title={isMuted ? 'Unmute (M)' : 'Mute (M)'}>
+              <button className="ctrl-btn volume-btn" onClick={toggleMute} title={isMuted ? 'Unmute (M)' : 'Mute (M)'}>
                 {isMuted || volume === 0 ? <FaVolumeMute /> : volume < 0.5 ? <FaVolumeDown /> : <FaVolumeUp />}
               </button>
               <input
@@ -465,9 +560,9 @@ const VideoPlayer = ({
 
             {/* Time Stamp Display */}
             <div className="time-display">
-              <span>{formatTime(currentTime)}</span>
+              <span className="current-time">{formatTime(currentTime)}</span>
               <span className="time-divider">/</span>
-              <span>{formatTime(duration)}</span>
+              <span className="total-time">{formatTime(duration)}</span>
             </div>
           </div>
 
@@ -497,7 +592,12 @@ const VideoPlayer = ({
             </div>
 
             {/* Fullscreen Button */}
-            <button className="ctrl-btn" onClick={toggleFullscreen} title="Fullscreen (F)">
+            <button
+              className="ctrl-btn fullscreen-btn"
+              onClick={toggleFullscreen}
+              title={isFullscreen ? 'Exit Fullscreen (F)' : 'Fullscreen & Landscape (F)'}
+              aria-label="Toggle Fullscreen"
+            >
               {isFullscreen ? <FaCompress /> : <FaExpand />}
             </button>
           </div>
